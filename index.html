@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <style>
+        #messages {
+
+        }
+    </style>
+</head>
+<body>
+<header>
+
+</header>
+<form id="publish">
+    <h1>Welkome to the Chat O.Motenko</h1>
+    <input type="text" name="message" placeholder="Enter the Text to Submit">
+    <input type="submit" value="Send">
+</form>
+<ul id="messages"></ul>
+<footer>
+
+</footer>
+<script>
+    publish.onsubmit = function() {
+        var xhr = new XMLHttpRequest()
+        xhr.open('POST', '/publish', true);
+        xhr.send(JSON.stringify({message:this.elements.message.value}));
+        this.elements.message.value = '';
+
+        return false;
+    }
+
+    subscribe();
+
+    function subscribe() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/subscribe', true);
+
+        xhr.onreadystatechange = function () {
+            if(this.readyState != 4) return;
+
+            if (this.status != 200) {
+                setTimeout(subscribe, 500);
+                return;
+            }
+
+            var li = document.createElement('li');
+            li.textContent = this.responseText;
+            messages.appendChild(li);
+
+            subscribe();
+        };
+
+        xhr.send('');
+    }
+</script>
+</body>
+</html>
